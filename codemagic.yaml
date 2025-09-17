@@ -13,26 +13,38 @@ workflows:
       - name: Set up local.properties
         script: |
           echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+          
+      - name: Ensure intl version is compatible
+        script: |
+          # تحديث نسخة intl لتجنب مشاكل flutter_localizations
+          flutter pub add intl:^0.20.2
+
       - name: Get Flutter packages
         script: |
-          flutter packages pub get
+          flutter pub get
+          
       - name: Flutter analyze
         script: |
           flutter analyze
+          
       - name: Flutter unit tests
         script: |
           flutter test
+          
       - name: Build Android APK
         script: |
           flutter build apk --release
+          
       - name: Build Android App Bundle
         script: |
           flutter build appbundle --release
+          
     artifacts:
       - build/**/outputs/**/*.apk
       - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt
       - flutter_drive.log
+      
     publishing:
       email:
         recipients:
